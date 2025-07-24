@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تطبيق أذكار</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#1a1a1a',
+                            700: '#2a2a2a',
+                            600: '#3a3a3a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'ui-sans-serif', 'system-ui']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Typing Animation */
+        @keyframes typing {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+            100% { content: '.'; }
+        }
+        .typing::after {
+            content: '...';
+            display: inline-block;
+            width: 1.5em;
+            animation: typing 1.5s infinite;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Message Animation */
+        .message {
+            animation: slideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Input Focus Effect */
+        #message-input {
+            transition: all 0.2s ease;
+        }
+        #message-input:focus {
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.5);
+            border-color: rgba(14, 165, 233, 0.5);
+        }
+
+        /* Sidebar Animation */
+        .sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-collapsed {
+            transform: translateX(100%);
+            opacity: 0;
+            width: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+
+        /* Hover Effects */
+        .history-item {
+            transition: all 0.2s ease;
+        }
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .copy-button {
+            transition: all 0.2s ease;
+            opacity: 0;
+        }
+        .message:hover .copy-button {
+            opacity: 1;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Button Hover Effect */
+        .btn-hover {
+            transition: all 0.2s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .sidebar {
+                width: 100% !important;
+                max-width: 100%;
+            }
+            .main-content {
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+            }
+            .message-content {
+                max-width: 90% !important;
+            }
+            .suggestions-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-100 min-h-screen flex font-sans">
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="w-80 glass flex flex-col p-4 h-screen fixed z-20 rtl:right-0 rtl:left-auto ltr:left-0 ltr:right-auto md:relative md:z-0 sidebar-collapsed">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold flex items-center">
+                <i class="fa-solid fa-comments mr-2 text-primary-400"></i> 
+                <span class="gradient-text">المحادثات</span>
+            </h3>
+            <button id="toggle-sidebar" class="text-gray-400 hover:text-white btn-hover">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <button id="new-chat" class="flex items-center justify-center gap-2 bg-primary-600 text-white px-4 py-3 rounded-xl mb-6 hover:bg-primary-700 transition-colors btn-hover">
+            <i class="fa-solid fa-plus"></i> 
+            <span>محادثة جديدة</span>
+        </button>
+        <div class="flex-1 overflow-y-auto">
+            <div id="chat-history" class="flex flex-col gap-1"></div>
+        </div>
+        <div class="pt-4 border-t border-gray-800 mt-4">
+            <div class="flex items-center gap-3 text-sm text-gray-400">
+                <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-6 h-6">
+                <span>تطبيق أذكار</span>
+                <span class="text-xs bg-primary-900 text-primary-300 px-2 py-1 rounded-full">v2.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col h-screen main-content rtl:mr-0 ltr:ml-0 md:rtl:mr-80 md:ltr:ml-80 transition-all duration-300">
+        <!-- Header -->
+        <div class="glass p-4 flex justify-between items-center border-b border-gray-800">
+            <button id="mobile-menu-button" class="md:hidden text-gray-400 hover:text-white mr-4">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-6 h-6">
+                <h2 class="text-xl font-semibold tracking-tight gradient-text">تطبيق أذكار</h2>
+            </div>
+            <span id="chat-title" class="text-sm text-gray-400 truncate max-w-[120px] md:max-w-[200px]">محادثة جديدة</span>
+        </div>
+
+        <!-- Messages -->
+        <div id="chat-messages" class="flex-1 p-4 md:p-6 overflow-y-auto flex flex-col gap-4 md:gap-6 bg-gradient-to-b from-dark-900 to-dark-800" style="scroll-behavior: smooth;">
+            <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 px-2">
+                <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-12 h-12 md:w-16 md:h-16 mb-3 md:mb-4 opacity-60">
+                <h3 class="text-lg md:text-xl font-medium text-gray-300 mb-1 md:mb-2">مرحبًا بك في تطبيق أذكار</h3>
+                <p class="max-w-md mb-4 md:mb-6 text-sm md:text-base">كيف يمكنني مساعدتك اليوم؟</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 w-full suggestions-grid">
+                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                        "أذكار الصباح"
+                    </div>
+                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                        "أذكار المساء"
+                    </div>
+                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                        "أذكار النوم"
+                    </div>
+                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                        "أذكار بعد الصلاة"
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="p-3 md:p-4 glass border-t border-gray-800">
+            <div class="flex gap-2 md:gap-3 max-w-4xl mx-auto w-full">
+                <div class="flex-1 relative">
+                    <input
+                        type="text"
+                        id="message-input"
+                        placeholder="اكتب رسالتك هنا..."
+                        class="w-full p-3 md:p-4 pr-10 md:pr-12 rounded-lg md:rounded-xl bg-dark-700 border border-dark-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                        autocomplete="off"
+                    >
+                    <button id="voice-button" class="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-400">
+                        <i class="fa-solid fa-microphone text-sm md:text-base"></i>
+                    </button>
+                </div>
+                <button
+                    id="send-button"
+                    class="bg-primary-600 text-white px-4 md:px-5 rounded-lg md:rounded-xl hover:bg-primary-700 transition-colors duration-200 disabled:bg-dark-600 disabled:text-dark-400 btn-hover flex items-center justify-center"
+                    style="min-width: 50px;"
+                >
+                    <i class="fa-solid fa-paper-plane text-sm md:text-base"></i>
+                </button>
+            </div>
+            <div class="text-xs text-center text-gray-500 mt-2 md:mt-3 px-2">
+                تطبيق أذكار قد يقدم معلومات غير دقيقة. الرجاء التحقق من المعلومات المهمة.
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading-indicator" class="fixed bottom-20 md:bottom-24 left-1/2 transform -translate-x-1/2 bg-dark-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm flex items-center gap-2 shadow-lg hidden">
+        <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-primary-400 pulse"></div>
+        <span>جارٍ المعالجة...</span>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyCJVNaYui1V4ZjNldsH_eRHhjKSFFncCvk';
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const newChatButton = document.getElementById('new-chat');
+        const chatHistory = document.getElementById('chat-history');
+        const chatTitle = document.getElementById('chat-title');
+        const toggleSidebarButton = document.getElementById('toggle-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const voiceButton = document.getElementById('voice-button');
+
+        // Load chat sessions from localStorage
+        let sessions = JSON.parse(localStorage.getItem('chatSessions')) || [{ id: Date.now(), messages: [], title: 'محادثة جديدة' }];
+        let currentSessionId = sessions[0].id;
+        renderChatHistory();
+        loadSessionMessages(currentSessionId);
+
+        // Initialize with welcome message if new session
+        function showWelcomeMessage() {
+            const currentSession = sessions.find(s => s.id === currentSessionId);
+            if (currentSession.messages.length === 0) {
+                chatMessages.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 px-2">
+                        <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-12 h-12 md:w-16 md:h-16 mb-3 md:mb-4 opacity-60">
+                        <h3 class="text-lg md:text-xl font-medium text-gray-300 mb-1 md:mb-2">مرحبًا بك في تطبيق أذكار</h3>
+                        <p class="max-w-md mb-4 md:mb-6 text-sm md:text-base">كيف يمكنني مساعدتك اليوم؟</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 w-full suggestions-grid">
+                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                                "أذكار الصباح"
+                            </div>
+                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                                "أذكار المساء"
+                            </div>
+                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                                "أذكار النوم"
+                            </div>
+                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                                "أذكار بعد الصلاة"
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function suggestQuestion(element) {
+            const question = element.innerText.replace(/"/g, '').trim();
+            messageInput.value = question;
+            messageInput.focus();
+        }
+
+        async function sendMessage() {
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            sendButton.disabled = true;
+            loadingIndicator.classList.remove('hidden');
+
+            // Clear welcome message if it's the first message
+            if (chatMessages.querySelector('.flex.flex-col.items-center')) {
+                chatMessages.innerHTML = '';
+            }
+
+            // Add user message
+            appendMessage(messageText, 'user', timestamp);
+            saveMessage(messageText, 'user', timestamp);
+            messageInput.value = '';
+
+            // Update chat title based on first message
+            const currentSession = sessions.find(s => s.id === currentSessionId);
+            if (currentSession.messages.length === 1) {
+                currentSession.title = messageText.slice(0, 20) + (messageText.length > 20 ? '...' : '');
+                chatTitle.textContent = currentSession.title;
+                renderChatHistory();
+            }
+
+            // Add typing indicator
+            const typingMessage = appendMessage('', 'bot typing', timestamp);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-goog-api-key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: messageText
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const botResponse = data.candidates[0].content.parts[0].text;
+
+                // Remove typing indicator and add bot response
+                typingMessage.remove();
+                appendMessage(botResponse, 'bot', timestamp);
+                saveMessage(botResponse, 'bot', timestamp);
+
+            } catch (error) {
+                console.error('Error:', error);
+                typingMessage.remove();
+                appendMessage('عذرًا، حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.', 'bot error', timestamp);
+                saveMessage('Error occurred', 'bot error', timestamp);
+            }
+
+            sendButton.disabled = false;
+            loadingIndicator.classList.add('hidden');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function appendMessage(text, type, timestamp) {
+            const messageDiv = document.createElement('div');
+            const isUser = type === 'user';
+            const isError = type.includes('error');
+            const isTyping = type.includes('typing');
+
+            messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} message w-full max-w-3xl mx-auto relative group`;
+            
+            let messageContent;
+            if (isTyping) {
+                messageContent = `
+                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 text-gray-300 flex items-center gap-2 w-full message-content">
+                        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-dark-600 flex items-center justify-center flex-shrink-0">
+                            <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار" class="w-4 h-4 md:w-5 md:h-5">
+                        </div>
+                        <div class="typing text-sm md:text-base">يكتب</div>
+                    </div>
+                `;
+            } else {
+                messageContent = `
+                    <div class="w-full flex ${isUser ? 'flex-row-reverse' : 'flex-row'} gap-2 md:gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 rounded-full ${isUser ? 'bg-primary-600' : 'bg-dark-600'} flex items-center justify-center mt-1">
+                            ${isUser ? 
+                                '<i class="fa-solid fa-user text-xs text-white"></i>' : 
+                                '<img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار" class="w-4 h-4 md:w-5 md:h-5">'}
+                        </div>
+                        <div class="flex-1 message-content">
+                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl ${
+                                isUser ? 'bg-primary-600/10 border border-primary-600/20 text-white' :
+                                isError ? 'bg-red-900/20 border border-red-900/30 text-red-200' :
+                                'bg-dark-700 border border-dark-600 text-gray-300'
+                            }">
+                                <div class="text-sm md:text-base leading-relaxed whitespace-pre-wrap">${text}</div>
+                                <div class="text-xs mt-1 md:mt-2 opacity-70 flex ${isUser ? 'flex-row-reverse' : 'flex-row'} justify-between items-center">
+                                    <span>${timestamp}</span>
+                                    <div class="flex gap-1">
+                                        <button class="copy-button text-gray-400 hover:text-white" onclick="copyToClipboard('${text.replace(/'/g, "\\'")}')">
+                                            <i class="fa-solid fa-copy text-xs md:text-sm"></i>
+                                        </button>
+                                        ${!isUser ? `
+                                        <button class="copy-button text-gray-400 hover:text-green-400" onclick="shareMessage('${text.replace(/'/g, "\\'")}')">
+                                            <i class="fa-solid fa-share text-xs md:text-sm"></i>
+                                        </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = messageContent;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return messageDiv;
+        }
+
+        function saveMessage(text, type, timestamp) {
+            const currentSession = sessions.find(s => s.id === currentSessionId);
+            currentSession.messages.push({ text, type, timestamp });
+            localStorage.setItem('chatSessions', JSON.stringify(sessions));
+        }
+
+        function renderChatHistory() {
+            chatHistory.innerHTML = '';
+            sessions.forEach(session => {
+                const historyItem = document.createElement('div');
+                historyItem.className = `history-item p-2 md:p-3 rounded-lg md:rounded-xl cursor-pointer flex items-center gap-2 md:gap-3 ${
+                    session.id === currentSessionId ? 'bg-primary-900/20 border border-primary-800/30' : ''
+                }`;
+                historyItem.innerHTML = `
+                    <div class="w-6 h-6 md:w-8 md:h-8 rounded-full flex-shrink-0 ${
+                        session.id === currentSessionId ? 'bg-primary-600/20' : 'bg-dark-700'
+                    } flex items-center justify-center">
+                        <i class="fa-solid fa-comment text-xs ${
+                            session.id === currentSessionId ? 'text-primary-400' : 'text-gray-500'
+                        }"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs md:text-sm truncate ${
+                            session.id === currentSessionId ? 'text-white' : 'text-gray-400'
+                        }">${session.title}</div>
+                        <div class="text-[10px] md:text-xs mt-0.5 ${
+                            session.id === currentSessionId ? 'text-primary-400' : 'text-gray-500'
+                        }">
+                            ${session.messages.length > 0 ? 
+                                session.messages[session.messages.length - 1].timestamp : 
+                                ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        ${session.id === currentSessionId ? 
+                            '<i class="fa-solid fa-check text-xs text-primary-400 flex-shrink-0"></i>' : ''}
+                        <button class="text-gray-400 hover:text-red-400 text-xs" onclick="deleteChat(event, '${session.id}')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                historyItem.addEventListener('click', (e) => {
+                    // Prevent triggering when clicking on delete button
+                    if (!e.target.closest('button')) {
+                        currentSessionId = session.id;
+                        loadSessionMessages(session.id);
+                        renderChatHistory();
+                        chatTitle.textContent = session.title;
+                        if (window.innerWidth < 768) {
+                            toggleSidebar();
+                        }
+                    }
+                });
+                chatHistory.appendChild(historyItem);
+            });
+        }
+
+        function deleteChat(event, sessionId) {
+            event.stopPropagation();
+            
+            if (confirm('هل أنت متأكد أنك تريد حذف هذه المحادثة؟')) {
+                sessions = sessions.filter(s => s.id !== sessionId);
+                
+                if (sessions.length === 0) {
+                    const newSession = { id: Date.now(), messages: [], title: 'محادثة جديدة' };
+                    sessions.push(newSession);
+                }
+                
+                if (currentSessionId === sessionId) {
+                    currentSessionId = sessions[0].id;
+                    loadSessionMessages(currentSessionId);
+                    chatTitle.textContent = sessions[0].title;
+                }
+                
+                localStorage.setItem('chatSessions', JSON.stringify(sessions));
+                renderChatHistory();
+            }
+        }
+
+        function loadSessionMessages(sessionId) {
+            chatMessages.innerHTML = '';
+            const session = sessions.find(s => s.id === sessionId);
+            if (session.messages.length === 0) {
+                showWelcomeMessage();
+            } else {
+                session.messages.forEach(msg => appendMessage(msg.text, msg.type, msg.timestamp));
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show toast notification
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-dark-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-2 shadow-lg z-50';
+                toast.innerHTML = `
+                    <i class="fa-solid fa-check text-green-400"></i>
+                    <span>تم نسخ النص!</span>
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.remove();
+                }, 2000);
+            });
+        }
+
+        function shareMessage(text) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'أذكار',
+                    text: text,
+                }).catch(err => {
+                    console.error('Error sharing:', err);
+                    copyToClipboard(text);
+                });
+            } else {
+                copyToClipboard(text);
+            }
+        }
+
+        // New Chat
+        newChatButton.addEventListener('click', () => {
+            const newSession = { id: Date.now(), messages: [], title: 'محادثة جديدة' };
+            sessions.unshift(newSession); // Add to beginning of array
+            currentSessionId = newSession.id;
+            localStorage.setItem('chatSessions', JSON.stringify(sessions));
+            loadSessionMessages(currentSessionId);
+            renderChatHistory();
+            chatTitle.textContent = newSession.title;
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
+        });
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('sidebar-collapsed');
+            sidebarOverlay.classList.toggle('hidden');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        toggleSidebarButton.addEventListener('click', toggleSidebar);
+        mobileMenuButton.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        // Voice Recognition
+        voiceButton.addEventListener('click', () => {
+            if (!('webkitSpeechRecognition' in window)) {
+                appendMessage('متصفحك لا يدعم التعرف على الصوت.', 'bot error', new Date().toLocaleTimeString());
+                return;
+            }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'ar-SA';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                voiceButton.innerHTML = '<i class="fa-solid fa-microphone-slash pulse"></i>';
+                voiceButton.classList.add('text-primary-400');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                messageInput.value = transcript;
+                voiceButton.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                voiceButton.classList.remove('text-primary-400');
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Voice recognition error', event.error);
+                voiceButton.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                voiceButton.classList.remove('text-primary-400');
+            };
+
+            recognition.start();
+        });
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !sendButton.disabled) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-focus and responsive sidebar
+        messageInput.focus();
+        
+        // Responsive behavior
+        function handleResize() {
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('sidebar-collapsed');
+                sidebarOverlay.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('sidebar-collapsed');
+                sidebarOverlay.classList.add('hidden');
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initialize
+
+        // Prevent zooming on mobile devices
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        });
+
+        // Handle virtual keyboard appearance
+        window.addEventListener('resize', function() {
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 300);
+        });
+    </script>
+</body>
+</html>
