@@ -27,35 +27,63 @@
                             800: '#1a1a1a',
                             700: '#2a2a2a',
                             600: '#3a3a3a',
+                        },
+                        light: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
                         }
                     },
                     fontFamily: {
                         sans: ['Tajawal', 'ui-sans-serif', 'system-ui']
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px rgba(14, 165, 233, 0.3)',
+                        'card': '0 4px 20px rgba(0, 0, 0, 0.2)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'fade-out': 'fadeOut 0.3s ease-out',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeOut: {
+                            '0%': { opacity: '1', transform: 'translateX(0)' },
+                            '100%': { opacity: '0', transform: 'translateX(50px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 10px rgba(14, 165, 233, 0.2)' },
+                            '50%': { boxShadow: '0 0 20px rgba(14, 165, 233, 0.5)' },
+                        }
                     }
                 }
             }
         }
     </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <style>
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(14, 165, 233, 0.4);
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(14, 165, 233, 0.6);
         }
 
-        /* Typing Animation */
         @keyframes typing {
             0% { content: '.'; }
             33% { content: '..'; }
@@ -70,35 +98,24 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* Message Animation */
-        .message {
-            animation: slideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Glassmorphism Effect */
         .glass {
             background: rgba(15, 15, 15, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* Input Focus Effect */
         #message-input {
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
         #message-input:focus {
-            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.5);
-            border-color: rgba(14, 165, 233, 0.5);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3);
+            border-color: rgba(14, 165, 233, 0.7);
         }
 
-        /* Sidebar Animation */
         .sidebar {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         .sidebar-collapsed {
             transform: translateX(100%);
@@ -108,48 +125,88 @@
             overflow: hidden;
         }
 
-        /* Hover Effects */
         .history-item {
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
         .history-item:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(14, 165, 233, 0.1);
+            transform: translateX(-5px);
         }
-        .copy-button {
-            transition: all 0.2s ease;
+        .copy-button, .delete-chat-btn {
+            transition: all 0.3s ease;
             opacity: 0;
         }
-        .message:hover .copy-button {
+        .message:hover .copy-button, .history-item:hover .delete-chat-btn {
             opacity: 1;
         }
 
-        /* Pulse Animation */
         @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
+            0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
         }
         .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        /* Gradient Text */
         .gradient-text {
-            background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+            background: linear-gradient(90deg, #38bdf8, #0284c7);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
-        /* Button Hover Effect */
         .btn-hover {
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
         .btn-hover:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3);
         }
 
-        /* Responsive Adjustments */
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top: 2px solid #0ea5e9;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .light-mode {
+            background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+            color: #1a1a1a;
+        }
+        .light-mode .glass {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .light-mode .bg-dark-700 {
+            background: #e2e8f0;
+        }
+        .light-mode .text-gray-300 {
+            color: #2a2a2a;
+        }
+        .light-mode .text-gray-400 {
+            color: #4a4a4a;
+        }
+        .light-mode .bg-dark-900 {
+            background: #f1f5f9;
+        }
+        .light-mode .bg-dark-800 {
+            background: #e2e8f0;
+        }
+        .light-mode .border-dark-600 {
+            border-color: #cbd5e1;
+        }
+        .light-mode .text-white {
+            color: #1a1a1a;
+        }
+
         @media (max-width: 640px) {
             .sidebar {
                 width: 100% !important;
@@ -165,30 +222,40 @@
             .suggestions-grid {
                 grid-template-columns: 1fr !important;
             }
+            .btn-hover, #send-button, #voice-button {
+                padding: 1rem !important;
+                min-width: 56px !important;
+            }
+            #message-input {
+                padding: 1rem !important;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
-<body class="bg-dark-900 text-gray-100 min-h-screen flex font-sans">
-    <!-- Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
-
-    <!-- Sidebar -->
-    <div id="sidebar" class="w-80 glass flex flex-col p-4 h-screen fixed z-20 rtl:right-0 rtl:left-auto ltr:left-0 ltr:right-auto md:relative md:z-0 sidebar-collapsed">
+<body class="bg-dark-900 text-gray-100 min-h-screen flex font-sans transition-all duration-300">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/70 z-50 hidden md:hidden" onclick="toggleSidebar()"></div>
+    <div id="sidebar" class="w-80 glass flex flex-col p-5 h-screen fixed z-50 rtl:right-0 rtl:left-auto ltr:left-0 ltr:right-auto md:relative md:z-0 sidebar-collapsed" aria-label="الشريط الجانبي للمحادثات">
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-semibold flex items-center">
+            <h3 class="text-xl font-bold flex items-center">
                 <i class="fa-solid fa-comments mr-2 text-primary-400"></i> 
                 <span class="gradient-text">المحادثات</span>
             </h3>
-            <button id="toggle-sidebar" class="text-gray-400 hover:text-white btn-hover">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <button id="theme-toggle" class="text-gray-400 hover:text-white btn-hover" aria-label="تبديل الوضع">
+                    <i class="fa-solid fa-moon text-lg"></i>
+                </button>
+                <button id="toggle-sidebar" class="text-gray-400 hover:text-white btn-hover" aria-label="إغلاق الشريط الجانبي">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
         </div>
-        <button id="new-chat" class="flex items-center justify-center gap-2 bg-primary-600 text-white px-4 py-3 rounded-xl mb-6 hover:bg-primary-700 transition-colors btn-hover">
+        <button id="new-chat" class="flex items-center justify-center gap-2 bg-primary-600 text-white px-5 py-3 rounded-xl mb-6 hover:bg-primary-700 transition-colors btn-hover shadow-glow animate-pulse-glow" aria-label="بدء محادثة جديدة">
             <i class="fa-solid fa-plus"></i> 
             <span>محادثة جديدة</span>
         </button>
         <div class="flex-1 overflow-y-auto">
-            <div id="chat-history" class="flex flex-col gap-1"></div>
+            <div id="chat-history" class="flex flex-col gap-2"></div>
         </div>
         <div class="pt-4 border-t border-gray-800 mt-4">
             <div class="flex items-center gap-3 text-sm text-gray-400">
@@ -198,82 +265,87 @@
             </div>
         </div>
     </div>
-
-    <!-- Main Chat Area -->
     <div class="flex-1 flex flex-col h-screen main-content rtl:mr-0 ltr:ml-0 md:rtl:mr-80 md:ltr:ml-80 transition-all duration-300">
-        <!-- Header -->
-        <div class="glass p-4 flex justify-between items-center border-b border-gray-800">
-            <button id="mobile-menu-button" class="md:hidden text-gray-400 hover:text-white mr-4">
-                <i class="fa-solid fa-bars text-lg"></i>
+        <div class="glass p-5 flex justify-between items-center border-b border-gray-800">
+            <button id="mobile-menu-button" class="md:hidden text-gray-400 hover:text-white mr-4 btn-hover" aria-label="فتح الشريط الجانبي">
+                <i class="fa-solid fa-bars text-xl"></i>
             </button>
-            <div class="flex items-center gap-2">
-                <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-6 h-6">
-                <h2 class="text-xl font-semibold tracking-tight gradient-text">تطبيق أذكار</h2>
+            <div class="flex items-center gap-3">
+                <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-8 h-8">
+                <h2 class="text-2xl font-bold tracking-tight gradient-text">تطبيق أذكار</h2>
             </div>
-            <span id="chat-title" class="text-sm text-gray-400 truncate max-w-[120px] md:max-w-[200px]">محادثة جديدة</span>
+            <span id="chat-title" class="text-sm text-gray-400 truncate max-w-[150px] md:max-w-[250px]" aria-live="polite">محادثة جديدة</span>
         </div>
-
-        <!-- Messages -->
-        <div id="chat-messages" class="flex-1 p-4 md:p-6 overflow-y-auto flex flex-col gap-4 md:gap-6 bg-gradient-to-b from-dark-900 to-dark-800" style="scroll-behavior: smooth;">
-            <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 px-2">
-                <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-12 h-12 md:w-16 md:h-16 mb-3 md:mb-4 opacity-60">
-                <h3 class="text-lg md:text-xl font-medium text-gray-300 mb-1 md:mb-2">مرحبًا بك في تطبيق أذكار</h3>
-                <p class="max-w-md mb-4 md:mb-6 text-sm md:text-base">كيف يمكنني مساعدتك اليوم؟</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 w-full suggestions-grid">
-                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+        <div id="chat-messages" class="flex-1 p-5 md:p-6 overflow-y-auto flex flex-col gap-5 bg-gradient-to-b from-dark-900 to-dark-800" style="scroll-behavior: smooth;" aria-live="polite">
+            <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 px-4">
+                <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-16 h-16 md:w-20 md:h-20 mb-4 md:mb-6 opacity-70">
+                <h3 class="text-xl md:text-2xl font-bold text-gray-200 mb-2 md:mb-3">مرحبًا بك في تطبيق أذكار</h3>
+                <p class="max-w-lg mb-6 md:mb-8 text-base md:text-lg">كيف يمكنني مساعدتك اليوم؟</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 w-full max-w-2xl suggestions-grid">
+                    <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                         "أذكار الصباح"
                     </div>
-                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                    <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                         "أذكار المساء"
                     </div>
-                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                    <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                         "أذكار النوم"
                     </div>
-                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                    <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                         "أذكار بعد الصلاة"
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Input -->
-        <div class="p-3 md:p-4 glass border-t border-gray-800">
-            <div class="flex gap-2 md:gap-3 max-w-4xl mx-auto w-full">
+        <div class="p-4 md:p-5 glass border-t border-gray-800">
+            <div class="flex gap-3 max-w-4xl mx-auto w-full">
                 <div class="flex-1 relative">
                     <input
                         type="text"
                         id="message-input"
                         placeholder="اكتب رسالتك هنا..."
-                        class="w-full p-3 md:p-4 pr-10 md:pr-12 rounded-lg md:rounded-xl bg-dark-700 border border-dark-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                        class="w-full p-4 md:p-5 pr-12 md:pr-14 rounded-xl bg-dark-700 border border-dark-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 shadow-card"
                         autocomplete="off"
+                        maxlength="1000"
                     >
-                    <button id="voice-button" class="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-400">
-                        <i class="fa-solid fa-microphone text-sm md:text-base"></i>
+                    <button id="voice-button" class="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-400 btn-hover" aria-label="التعرف على الصوت">
+                        <i class="fa-solid fa-microphone text-lg md:text-xl"></i>
                     </button>
                 </div>
                 <button
                     id="send-button"
-                    class="bg-primary-600 text-white px-4 md:px-5 rounded-lg md:rounded-xl hover:bg-primary-700 transition-colors duration-200 disabled:bg-dark-600 disabled:text-dark-400 btn-hover flex items-center justify-center"
-                    style="min-width: 50px;"
+                    class="bg-primary-600 text-white px-5 md:px-6 rounded-xl hover:bg-primary-700 transition-colors duration-200 disabled:bg-dark-600 disabled:text-dark-400 btn-hover shadow-glow animate-pulse-glow flex items-center justify-center"
+                    style="min-width: 56px;"
+                    aria-label="إرسال الرسالة"
                 >
-                    <i class="fa-solid fa-paper-plane text-sm md:text-base"></i>
+                    <i class="fa-solid fa-paper-plane text-lg md:text-xl"></i>
                 </button>
             </div>
-            <div class="text-xs text-center text-gray-500 mt-2 md:mt-3 px-2">
+            <div class="text-xs text-center text-gray-500 mt-3 md:mt-4 px-4">
                 تطبيق أذكار قد يقدم معلومات غير دقيقة. الرجاء التحقق من المعلومات المهمة.
             </div>
         </div>
     </div>
-
-    <!-- Loading Indicator -->
-    <div id="loading-indicator" class="fixed bottom-20 md:bottom-24 left-1/2 transform -translate-x-1/2 bg-dark-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm flex items-center gap-2 shadow-lg hidden">
-        <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-primary-400 pulse"></div>
+    <div id="loading-indicator" class="fixed bottom-20 md:bottom-24 left-1/2 transform -translate-x-1/2 bg-dark-700 text-white px-4 py-2 rounded-full text-sm flex items-center gap-3 shadow-lg hidden">
+        <div class="spinner"></div>
         <span>جارٍ المعالجة...</span>
     </div>
-
+    <div id="toast-container" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col gap-2 z-50"></div>
     <script>
-        const API_KEY = 'AIzaSyCJVNaYui1V4ZjNldsH_eRHhjKSFFncCvk';
-        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+        function checkStorageSize(data) {
+            const stringified = JSON.stringify(data);
+            const sizeInBytes = (stringified.length * 2) / 1024 / 1024;
+            console.log('Storage size:', sizeInBytes, 'MB');
+            return sizeInBytes < 4.5;
+        }
+
+        const adhkarResponses = {
+            "أذكار الصباح": `**أذكار الصباح**:\n- اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك...\n(راجع كتب الأذكار الموثوقة للقائمة الكاملة).`,
+            "أذكار المساء": `**أذكار المساء**:\n- اللهم بك أمسينا وبك أحيينا...\n(راجع المصادر الشرعية للتفاصيل).`,
+            "أذكار النوم": `**أذكار النوم**:\n- باسمك اللهم أموت وأحيا...\n(راجع كتب الأذكار للقائمة الكاملة).`,
+            "أذكار بعد الصلاة": `**أذكار بعد الصلاة**:\n- أستغفر الله (ثلاث مرات)...\n(راجع المصادر الشرعية للتفاصيل).`
+        };
+
         const chatMessages = document.getElementById('chat-messages');
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
@@ -286,33 +358,59 @@
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const loadingIndicator = document.getElementById('loading-indicator');
         const voiceButton = document.getElementById('voice-button');
+        const themeToggle = document.getElementById('theme-toggle');
+        const toastContainer = document.getElementById('toast-container');
 
-        // Load chat sessions from localStorage
-        let sessions = JSON.parse(localStorage.getItem('chatSessions')) || [{ id: Date.now(), messages: [], title: 'محادثة جديدة' }];
-        let currentSessionId = sessions[0].id;
+        let isLightMode = localStorage.getItem('theme') === 'light';
+        if (isLightMode) {
+            document.body.classList.add('light-mode');
+            themeToggle.innerHTML = '<i class="fa-solid fa-sun text-lg"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            isLightMode = !isLightMode;
+            document.body.classList.toggle('light-mode');
+            themeToggle.innerHTML = isLightMode 
+                ? '<i class="fa-solid fa-sun text-lg"></i>'
+                : '<i class="fa-solid fa-moon text-lg"></i>';
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+        });
+
+        let sessions = JSON.parse(localStorage.getItem('chatSessions')) || [];
+        let currentSessionId = null;
+
+        if (sessions.length === 0) {
+            const newSession = { id: Date.now(), messages: [], title: 'محادثة جديدة' };
+            sessions.push(newSession);
+            currentSessionId = newSession.id;
+            localStorage.setItem('chatSessions', JSON.stringify(sessions));
+            console.log('Initialized new session:', newSession);
+        } else {
+            currentSessionId = sessions[0].id;
+        }
+
         renderChatHistory();
         loadSessionMessages(currentSessionId);
 
-        // Initialize with welcome message if new session
         function showWelcomeMessage() {
             const currentSession = sessions.find(s => s.id === currentSessionId);
-            if (currentSession.messages.length === 0) {
+            if (currentSession && currentSession.messages.length === 0) {
                 chatMessages.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 px-2">
-                        <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-12 h-12 md:w-16 md:h-16 mb-3 md:mb-4 opacity-60">
-                        <h3 class="text-lg md:text-xl font-medium text-gray-300 mb-1 md:mb-2">مرحبًا بك في تطبيق أذكار</h3>
-                        <p class="max-w-md mb-4 md:mb-6 text-sm md:text-base">كيف يمكنني مساعدتك اليوم؟</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 w-full suggestions-grid">
-                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 px-4 animate-fade-in">
+                        <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار Logo" class="w-16 h-16 md:w-20 md:h-20 mb-4 md:mb-6 opacity-70">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-200 mb-2 md:mb-3">مرحبًا بك في تطبيق أذكار</h3>
+                        <p class="max-w-lg mb-6 md:mb-8 text-base md:text-lg">كيف يمكنني مساعدتك اليوم؟</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 w-full max-w-2xl suggestions-grid">
+                            <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                                 "أذكار الصباح"
                             </div>
-                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                            <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                                 "أذكار المساء"
                             </div>
-                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                            <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                                 "أذكار النوم"
                             </div>
-                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-xs md:text-sm" onclick="suggestQuestion(this)">
+                            <div class="p-4 md:p-5 rounded-xl bg-dark-700 hover:bg-dark-600 cursor-pointer transition-colors border border-dark-600 text-sm md:text-base shadow-card" onclick="suggestQuestion(this)">
                                 "أذكار بعد الصلاة"
                             </div>
                         </div>
@@ -331,69 +429,81 @@
             const messageText = messageInput.value.trim();
             if (!messageText) return;
 
+            if (messageText.length > 1000) {
+                showToast('الرسالة طويلة جدًا. الرجاء إدخال رسالة أقصر.', 'error');
+                return;
+            }
+
+            if (!navigator.onLine) {
+                showToast('لا يوجد اتصال بالإنترنت. الرجاء التحقق من الاتصال.', 'error');
+                return;
+            }
+
             const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             sendButton.disabled = true;
             loadingIndicator.classList.remove('hidden');
 
-            // Clear welcome message if it's the first message
             if (chatMessages.querySelector('.flex.flex-col.items-center')) {
                 chatMessages.innerHTML = '';
             }
 
-            // Add user message
             appendMessage(messageText, 'user', timestamp);
             saveMessage(messageText, 'user', timestamp);
             messageInput.value = '';
 
-            // Update chat title based on first message
             const currentSession = sessions.find(s => s.id === currentSessionId);
             if (currentSession.messages.length === 1) {
-                currentSession.title = messageText.slice(0, 20) + (messageText.length > 20 ? '...' : '');
+                currentSession.title = messageText.slice(0, 50) + (messageText.length > 50 ? '...' : '');
                 chatTitle.textContent = currentSession.title;
                 renderChatHistory();
             }
 
-            // Add typing indicator
+            const adhkarResponse = adhkarResponses[messageText];
+            if (adhkarResponse) {
+                appendMessage(adhkarResponse, 'bot', timestamp);
+                saveMessage(adhkarResponse, 'bot', timestamp);
+                sendButton.disabled = false;
+                loadingIndicator.classList.add('hidden');
+                chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+                return;
+            }
+
             const typingMessage = appendMessage('', 'bot typing', timestamp);
 
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch('/api/sendMessage', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-goog-api-key': API_KEY
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: messageText
-                            }]
-                        }]
+                        message: messageText
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API request failed: ${response.status}`);
+                    throw new Error(`خطأ في الاستجابة: ${response.status}`);
                 }
 
                 const data = await response.json();
-                const botResponse = data.candidates[0].content.parts[0].text;
+                if (!data.text) {
+                    throw new Error('استجابة API غير صالحة');
+                }
 
-                // Remove typing indicator and add bot response
                 typingMessage.remove();
-                appendMessage(botResponse, 'bot', timestamp);
-                saveMessage(botResponse, 'bot', timestamp);
+                appendMessage(data.text, 'bot', timestamp);
+                saveMessage(data.text, 'bot', timestamp);
 
             } catch (error) {
                 console.error('Error:', error);
                 typingMessage.remove();
-                appendMessage('عذرًا، حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.', 'bot error', timestamp);
+                showToast('عذرًا، حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.', 'error');
                 saveMessage('Error occurred', 'bot error', timestamp);
             }
 
             sendButton.disabled = false;
             loadingIndicator.classList.add('hidden');
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
         }
 
         function appendMessage(text, type, timestamp) {
@@ -402,42 +512,42 @@
             const isError = type.includes('error');
             const isTyping = type.includes('typing');
 
-            messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} message w-full max-w-3xl mx-auto relative group`;
+            messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} message w-full max-w-3xl mx-auto relative group animate-fade-in`;
             
             let messageContent;
             if (isTyping) {
                 messageContent = `
-                    <div class="p-3 md:p-4 rounded-lg md:rounded-xl bg-dark-700 text-gray-300 flex items-center gap-2 w-full message-content">
-                        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-dark-600 flex items-center justify-center flex-shrink-0">
-                            <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار" class="w-4 h-4 md:w-5 md:h-5">
+                    <div class="p-4 md:p-5 rounded-xl bg-dark-700 text-gray-300 flex items-center gap-3 w-full message-content shadow-card">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-dark-600 flex items-center justify-center flex-shrink-0">
+                            <img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار" class="w-5 h-5 md:w-6 md:h-6">
                         </div>
-                        <div class="typing text-sm md:text-base">يكتب</div>
+                        <div class="typing text-base md:text-lg">يكتب</div>
                     </div>
                 `;
             } else {
                 messageContent = `
-                    <div class="w-full flex ${isUser ? 'flex-row-reverse' : 'flex-row'} gap-2 md:gap-3">
-                        <div class="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 rounded-full ${isUser ? 'bg-primary-600' : 'bg-dark-600'} flex items-center justify-center mt-1">
+                    <div class="w-full flex ${isUser ? 'flex-row-reverse' : 'flex-row'} gap-3 md:gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full ${isUser ? 'bg-primary-600' : 'bg-dark-600'} flex items-center justify-center mt-1 shadow-glow">
                             ${isUser ? 
-                                '<i class="fa-solid fa-user text-xs text-white"></i>' : 
-                                '<img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار" class="w-4 h-4 md:w-5 md:h-5">'}
+                                '<i class="fa-solid fa-user text-sm text-white"></i>' : 
+                                '<img src="https://www.appcreator24.com/srv/imgs/gen/3227467_ico.png?v=14" alt="أذكار" class="w-5 h-5 md:w-6 md:h-6">'}
                         </div>
                         <div class="flex-1 message-content">
-                            <div class="p-3 md:p-4 rounded-lg md:rounded-xl ${
-                                isUser ? 'bg-primary-600/10 border border-primary-600/20 text-white' :
+                            <div class="p-4 md:p-5 rounded-xl ${
+                                isUser ? 'bg-primary-600/20 border border-primary-600/30 text-white' :
                                 isError ? 'bg-red-900/20 border border-red-900/30 text-red-200' :
                                 'bg-dark-700 border border-dark-600 text-gray-300'
-                            }">
-                                <div class="text-sm md:text-base leading-relaxed whitespace-pre-wrap">${text}</div>
-                                <div class="text-xs mt-1 md:mt-2 opacity-70 flex ${isUser ? 'flex-row-reverse' : 'flex-row'} justify-between items-center">
+                            } shadow-card">
+                                <div class="text-base md:text-lg leading-relaxed whitespace-pre-wrap">${text}</div>
+                                <div class="text-xs mt-2 md:mt-3 opacity-70 flex ${isUser ? 'flex-row-reverse' : 'flex-row'} justify-between items-center">
                                     <span>${timestamp}</span>
-                                    <div class="flex gap-1">
-                                        <button class="copy-button text-gray-400 hover:text-white" onclick="copyToClipboard('${text.replace(/'/g, "\\'")}')">
-                                            <i class="fa-solid fa-copy text-xs md:text-sm"></i>
+                                    <div class="flex gap-2">
+                                        <button class="copy-button text-gray-400 hover:text-white btn-hover" onclick="copyToClipboard('${text.replace(/'/g, "\\'")}')" aria-label="نسخ النص">
+                                            <i class="fa-solid fa-copy text-sm md:text-base"></i>
                                         </button>
                                         ${!isUser ? `
-                                        <button class="copy-button text-gray-400 hover:text-green-400" onclick="shareMessage('${text.replace(/'/g, "\\'")}')">
-                                            <i class="fa-solid fa-share text-xs md:text-sm"></i>
+                                        <button class="copy-button text-gray-400 hover:text-green-400 btn-hover" onclick="shareMessage('${text.replace(/'/g, "\\'")}')" aria-label="مشاركة النص">
+                                            <i class="fa-solid fa-share text-sm md:text-base"></i>
                                         </button>
                                         ` : ''}
                                     </div>
@@ -450,36 +560,54 @@
             
             messageDiv.innerHTML = messageContent;
             chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
             return messageDiv;
         }
 
         function saveMessage(text, type, timestamp) {
+            console.log('Saving message to session:', currentSessionId, 'Text:', text);
             const currentSession = sessions.find(s => s.id === currentSessionId);
+            if (!currentSession) {
+                console.error('Current session not found:', currentSessionId);
+                showToast('خطأ: الجلسة الحالية غير موجودة.', 'error');
+                return;
+            }
             currentSession.messages.push({ text, type, timestamp });
-            localStorage.setItem('chatSessions', JSON.stringify(sessions));
+            if (checkStorageSize(sessions)) {
+                try {
+                    localStorage.removeItem('chatSessions');
+                    localStorage.setItem('chatSessions', JSON.stringify(sessions));
+                    console.log('Message saved, sessions:', sessions);
+                } catch (error) {
+                    console.error('Failed to save to localStorage:', error);
+                    showToast('خطأ: فشل في حفظ الجلسة.', 'error');
+                }
+            } else {
+                showToast('التخزين المحلي ممتلئ. الرجاء حذف بعض المحادثات.', 'error');
+            }
         }
 
         function renderChatHistory() {
+            console.log('Rendering chat history, sessions:', JSON.parse(JSON.stringify(sessions)));
             chatHistory.innerHTML = '';
             sessions.forEach(session => {
                 const historyItem = document.createElement('div');
-                historyItem.className = `history-item p-2 md:p-3 rounded-lg md:rounded-xl cursor-pointer flex items-center gap-2 md:gap-3 ${
+                historyItem.className = `history-item p-3 md:p-4 rounded-xl cursor-pointer flex items-center gap-3 md:gap-4 ${
                     session.id === currentSessionId ? 'bg-primary-900/20 border border-primary-800/30' : ''
-                }`;
+                } shadow-card`;
                 historyItem.innerHTML = `
-                    <div class="w-6 h-6 md:w-8 md:h-8 rounded-full flex-shrink-0 ${
+                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full flex-shrink-0 ${
                         session.id === currentSessionId ? 'bg-primary-600/20' : 'bg-dark-700'
-                    } flex items-center justify-center">
-                        <i class="fa-solid fa-comment text-xs ${
+                    } flex items-center justify-center shadow-glow">
+                        <i class="fa-solid fa-comment text-sm ${
                             session.id === currentSessionId ? 'text-primary-400' : 'text-gray-500'
                         }"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="text-xs md:text-sm truncate ${
+                        <div class="text-sm md:text-base truncate ${
                             session.id === currentSessionId ? 'text-white' : 'text-gray-400'
                         }">${session.title}</div>
-                        <div class="text-[10px] md:text-xs mt-0.5 ${
+                        <div class="text-xs mt-1 ${
                             session.id === currentSessionId ? 'text-primary-400' : 'text-gray-500'
                         }">
                             ${session.messages.length > 0 ? 
@@ -487,21 +615,21 @@
                                 ''}
                         </div>
                     </div>
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-2">
                         ${session.id === currentSessionId ? 
-                            '<i class="fa-solid fa-check text-xs text-primary-400 flex-shrink-0"></i>' : ''}
-                        <button class="text-gray-400 hover:text-red-400 text-xs" onclick="deleteChat(event, '${session.id}')">
+                            '<i class="fa-solid fa-check text-sm text-primary-400 flex-shrink-0"></i>' : ''}
+                        <button class="text-gray-400 hover:text-red-400 text-sm btn-hover delete-chat-btn" data-session-id="${session.id}" aria-label="حذف المحادثة">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 `;
                 historyItem.addEventListener('click', (e) => {
-                    // Prevent triggering when clicking on delete button
-                    if (!e.target.closest('button')) {
+                    if (e.target.closest('.delete-chat-btn')) return;
+                    if (session.id !== currentSessionId) {
                         currentSessionId = session.id;
-                        loadSessionMessages(session.id);
-                        renderChatHistory();
                         chatTitle.textContent = session.title;
+                        loadSessionMessages(currentSessionId);
+                        renderChatHistory();
                         if (window.innerWidth < 768) {
                             toggleSidebar();
                         }
@@ -509,54 +637,133 @@
                 });
                 chatHistory.appendChild(historyItem);
             });
+
+            document.querySelectorAll('.delete-chat-btn').forEach(button => {
+                button.removeEventListener('click', handleDeleteClick);
+                button.addEventListener('click', handleDeleteClick);
+            });
         }
 
-        function deleteChat(event, sessionId) {
-            event.stopPropagation();
-            
+        function handleDeleteClick(e) {
+            e.stopPropagation();
+            const sessionId = e.currentTarget.getAttribute('data-session-id');
+            deleteChat(sessionId);
+        }
+
+        function deleteChat(sessionId) {
+            console.log('Attempting to delete session:', sessionId);
+            console.log('Current sessions before deletion:', JSON.parse(JSON.stringify(sessions)));
+            const historyItem = document.querySelector(`.delete-chat-btn[data-session-id="${sessionId}"]`)?.closest('.history-item');
+            if (!historyItem) {
+                console.error('History item not found for session:', sessionId);
+                showToast('خطأ: تعذر العثور على المحادثة.', 'error');
+                return;
+            }
+
             if (confirm('هل أنت متأكد أنك تريد حذف هذه المحادثة؟')) {
-                sessions = sessions.filter(s => s.id !== sessionId);
-                
-                if (sessions.length === 0) {
-                    const newSession = { id: Date.now(), messages: [], title: 'محادثة جديدة' };
-                    sessions.push(newSession);
+                try {
+                    historyItem.classList.add('animate-fade-out');
+                    setTimeout(() => {
+                        sessions = sessions.filter(s => s.id !== Number(sessionId));
+                        console.log('Sessions after deletion:', JSON.parse(JSON.stringify(sessions)));
+
+                        if (sessions.length === 0) {
+                            const newSession = { id: Date.now(), messages: [], title: 'محادثة جديدة' };
+                            sessions.push(newSession);
+                            currentSessionId = newSession.id;
+                            console.log('Created new session:', newSession);
+                        } else if (currentSessionId === Number(sessionId)) {
+                            currentSessionId = sessions[0].id;
+                            console.log('Switching to new current session:', currentSessionId);
+                        }
+
+                        localStorage.removeItem('chatSessions');
+                        if (checkStorageSize(sessions)) {
+                            localStorage.setItem('chatSessions', JSON.stringify(sessions));
+                            console.log('Saved sessions to localStorage:', JSON.parse(JSON.stringify(sessions)));
+                        } else {
+                            showToast('التخزين المحلي ممتلئ. الرجاء حذف بعض المحادثات.', 'error');
+                            historyItem.classList.remove('animate-fade-out');
+                            return;
+                        }
+
+                        chatMessages.innerHTML = '';
+                        renderChatHistory();
+                        loadSessionMessages(currentSessionId);
+                        chatTitle.textContent = sessions.find(s => s.id === currentSessionId)?.title || 'محادثة جديدة';
+                        if (window.innerWidth < 768) {
+                            toggleSidebar();
+                        }
+                        showToast('تم حذف المحادثة بنجاح.', 'success');
+                    }, 300);
+                } catch (error) {
+                    console.error('Error deleting chat:', error);
+                    showToast('فشل حذف المحادثة. حاول مرة أخرى.', 'error');
+                    historyItem.classList.remove('animate-fade-out');
                 }
-                
-                if (currentSessionId === sessionId) {
-                    currentSessionId = sessions[0].id;
-                    loadSessionMessages(currentSessionId);
-                    chatTitle.textContent = sessions[0].title;
-                }
-                
-                localStorage.setItem('chatSessions', JSON.stringify(sessions));
-                renderChatHistory();
+            } else {
+                console.log('Delete cancelled by user');
             }
         }
 
         function loadSessionMessages(sessionId) {
+            console.log('Loading messages for session:', sessionId);
             chatMessages.innerHTML = '';
             const session = sessions.find(s => s.id === sessionId);
+            if (!session) {
+                console.error('Session not found:', sessionId);
+                showToast('خطأ: الجلسة غير موجودة.', 'error');
+                if (sessions.length > 0) {
+                    currentSessionId = sessions[0].id;
+                    chatTitle.textContent = sessions[0].title;
+                    loadSessionMessages(currentSessionId);
+                } else {
+                    const newSession = { id: Date.now(), messages: [], title: 'محادثة جديدة' };
+                    sessions.push(newSession);
+                    currentSessionId = newSession.id;
+                    localStorage.removeItem('chatSessions');
+                    localStorage.setItem('chatSessions', JSON.stringify(sessions));
+                    chatTitle.textContent = newSession.title;
+                    showWelcomeMessage();
+                }
+                return;
+            }
+            chatTitle.textContent = session.title;
             if (session.messages.length === 0) {
                 showWelcomeMessage();
             } else {
                 session.messages.forEach(msg => appendMessage(msg.text, msg.type, msg.timestamp));
             }
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow-lg animate-fade-in ${
+                type === 'error' ? 'bg-red-900/80 text-red-200' :
+                type === 'success' ? 'bg-green-900/80 text-green-200' :
+                'bg-dark-700 text-white'
+            }`;
+            toast.innerHTML = `
+                <i class="fa-solid ${
+                    type === 'error' ? 'fa-exclamation-circle' :
+                    type === 'success' ? 'fa-check-circle' :
+                    'fa-info-circle'
+                }"></i>
+                <span>${message}</span>
+            `;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
         }
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                // Show toast notification
-                const toast = document.createElement('div');
-                toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-dark-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-2 shadow-lg z-50';
-                toast.innerHTML = `
-                    <i class="fa-solid fa-check text-green-400"></i>
-                    <span>تم نسخ النص!</span>
-                `;
-                document.body.appendChild(toast);
-                setTimeout(() => {
-                    toast.remove();
-                }, 2000);
+                showToast('تم نسخ النص بنجاح!', 'success');
+            }).catch(() => {
+                showToast('فشل نسخ النص.', 'error');
             });
         }
 
@@ -574,64 +781,78 @@
             }
         }
 
-        // New Chat
         newChatButton.addEventListener('click', () => {
             const newSession = { id: Date.now(), messages: [], title: 'محادثة جديدة' };
-            sessions.unshift(newSession); // Add to beginning of array
+            sessions.unshift(newSession);
             currentSessionId = newSession.id;
-            localStorage.setItem('chatSessions', JSON.stringify(sessions));
+            if (checkStorageSize(sessions)) {
+                localStorage.removeItem('chatSessions');
+                localStorage.setItem('chatSessions', JSON.stringify(sessions));
+                console.log('New session created and saved:', newSession);
+            } else {
+                showToast('التخزين المحلي ممتلئ. الرجاء حذف بعض المحادثات.', 'error');
+                return;
+            }
+            chatMessages.innerHTML = '';
             loadSessionMessages(currentSessionId);
             renderChatHistory();
             chatTitle.textContent = newSession.title;
             if (window.innerWidth < 768) {
                 toggleSidebar();
             }
+            showToast('تم إنشاء محادثة جديدة.', 'success');
         });
 
-        // Toggle Sidebar
         function toggleSidebar() {
             sidebar.classList.toggle('sidebar-collapsed');
             sidebarOverlay.classList.toggle('hidden');
             document.body.classList.toggle('overflow-hidden');
+            messageInput.focus();
         }
 
         toggleSidebarButton.addEventListener('click', toggleSidebar);
         mobileMenuButton.addEventListener('click', toggleSidebar);
         sidebarOverlay.addEventListener('click', toggleSidebar);
 
-        // Voice Recognition
         voiceButton.addEventListener('click', () => {
-            if (!('webkitSpeechRecognition' in window)) {
-                appendMessage('متصفحك لا يدعم التعرف على الصوت.', 'bot error', new Date().toLocaleTimeString());
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast('متصفحك لا يدعم التعرف على الصوت.', 'error');
                 return;
             }
 
-            const recognition = new webkitSpeechRecognition();
+            const recognition = new SpeechRecognition();
             recognition.lang = 'ar-SA';
             recognition.interimResults = false;
 
             recognition.onstart = () => {
-                voiceButton.innerHTML = '<i class="fa-solid fa-microphone-slash pulse"></i>';
+                voiceButton.innerHTML = '<i class="fa-solid fa-microphone-slash pulse text-lg md:text-xl"></i>';
                 voiceButton.classList.add('text-primary-400');
             };
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 messageInput.value = transcript;
-                voiceButton.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                voiceButton.innerHTML = '<i class="fa-solid fa-microphone text-lg md:text-xl"></i>';
                 voiceButton.classList.remove('text-primary-400');
+                recognition.stop();
             };
 
             recognition.onerror = (event) => {
                 console.error('Voice recognition error', event.error);
-                voiceButton.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                voiceButton.innerHTML = '<i class="fa-solid fa-microphone text-lg md:text-xl"></i>';
+                voiceButton.classList.remove('text-primary-400');
+                showToast('حدث خطأ أثناء التعرف على الصوت.', 'error');
+            };
+
+            recognition.onend = () => {
+                voiceButton.innerHTML = '<i class="fa-solid fa-microphone text-lg md:text-xl"></i>';
                 voiceButton.classList.remove('text-primary-400');
             };
 
             recognition.start();
         });
 
-        // Event listeners
         sendButton.addEventListener('click', sendMessage);
         messageInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey && !sendButton.disabled) {
@@ -640,33 +861,34 @@
             }
         });
 
-        // Auto-focus and responsive sidebar
         messageInput.focus();
         
-        // Responsive behavior
         function handleResize() {
             if (window.innerWidth < 768) {
                 sidebar.classList.add('sidebar-collapsed');
                 sidebarOverlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
             } else {
                 sidebar.classList.remove('sidebar-collapsed');
                 sidebarOverlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
             }
         }
         
         window.addEventListener('resize', handleResize);
-        handleResize(); // Initialize
+        handleResize();
 
-        // Prevent zooming on mobile devices
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                setTimeout(() => {
+                    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+                    messageInput.focus();
+                }, 100);
+            });
+        }
+
         document.addEventListener('gesturestart', function (e) {
             e.preventDefault();
-        });
-
-        // Handle virtual keyboard appearance
-        window.addEventListener('resize', function() {
-            setTimeout(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 300);
         });
     </script>
 </body>
